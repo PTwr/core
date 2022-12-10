@@ -474,6 +474,7 @@ class TuyaLightEntity(TuyaEntity, LightEntity):
     def turn_on(self, **kwargs: Any) -> None:
         """Turn on or control the light."""
         commands = [{"code": self.entity_description.key, "value": True}]
+        brightness_commands = []
 
         if self._color_temp and ATTR_COLOR_TEMP in kwargs:
             if self._color_mode_dpcode:
@@ -576,7 +577,7 @@ class TuyaLightEntity(TuyaEntity, LightEntity):
                     to_max=brightness_max,
                 )
 
-            commands += [
+            brightness_commands  += [
                 {
                     "code": self._brightness.dpcode,
                     "value": round(self._brightness.remap_value_from(brightness)),
@@ -584,6 +585,9 @@ class TuyaLightEntity(TuyaEntity, LightEntity):
             ]
 
         self._send_command(commands)
+        self._send_command(brightness_commands)
+        
+        #self._send_command(commands)
 
     def turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
